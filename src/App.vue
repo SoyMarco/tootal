@@ -1,32 +1,107 @@
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+	<v-app id="app">
+		<v-navigation-drawer
+			fixed
+			:clipped="$vuetify.breakpoint.lgAndUp"
+			app
+			v-model="drawer"
+			v-if="logueado"
+		>
+			<v-list dense>
+				<template>
+					<v-list-item :to="{ name: 'home' }">
+						<v-list-item-action>
+							<v-icon>timeline</v-icon>
+						</v-list-item-action>
+						<v-list-item-title> Timeline </v-list-item-title>
+					</v-list-item>
+				</template>
+
+				<template>
+					<v-list-item :to="{ name: 'pacientes' }">
+						<v-list-item-action>
+							<v-icon>how_to_reg</v-icon>
+						</v-list-item-action>
+						<v-list-item-title>
+							Pacientes
+						</v-list-item-title>
+					</v-list-item>
+				</template>
+
+				
+			</v-list>
+		</v-navigation-drawer>
+
+		<v-app-bar
+			:clipped-left="$vuetify.breakpoint.lgAndUp"
+			app
+			color="primary"
+			dark
+		>
+			<v-toolbar-title style="width: 300px" class="ml-0 pl-3">
+				<v-app-bar-nav-icon @click.stop="drawer = !drawer"></v-app-bar-nav-icon>
+
+				<v-avatar color="primary" size="40"  @click="goHome" style="cursor: pointer">
+				
+						<v-img :src="require('@/assets/png/logo.png')"></v-img>
+					
+				</v-avatar>
+
+				<span class="hidden-sm-and-down">TootalDental</span>
+			</v-toolbar-title>
+			<v-spacer></v-spacer>
+			<v-btn @click="salir()" icon v-if="logueado">
+				<v-icon>logout</v-icon>Salir.......
+			</v-btn>
+		</v-app-bar>
+		<v-main>
+			<v-container fluid fill-height>
+				<v-slide-y-transition mode="out-in">
+					<router-view />
+				</v-slide-y-transition>
+			</v-container>
+		</v-main>
+
+		<v-footer height="auto">
+			<v-layout justify-center>
+				<v-flex text-xs-center>
+					<v-card flat tile color="primary" class="white--text">
+						<v-card-text class="white--text pt-0">
+							Marco ASR &copy;2021
+						</v-card-text>
+					</v-card>
+				</v-flex>
+			</v-layout>
+		</v-footer>
+	</v-app>
 </template>
 
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
+<script>
+	import ApolloExample from "./components/ApolloExample";
 
-#nav {
-  padding: 30px;
-}
+	export default {
+		name: "App",
 
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
+		components: {
+			ApolloExample,
+		},
 
-#nav a.router-link-exact-active {
-  color: #42b983;
-}
-</style>
+		data: () => ({
+			drawer: false,
+		}),
+		computed: {
+			logueado() {
+				return this.$store.state.usuario;
+			},
+		},
+
+		methods: {
+			salir() {
+				this.$store.dispatch("salir");
+			},
+      goHome(){
+         this.$router.push("/")
+      }
+		},
+	};
+</script>
