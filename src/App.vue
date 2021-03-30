@@ -39,6 +39,7 @@
           <v-toolbar-title  class="ml-0 pl-3">
             <v-app-bar-nav-icon
               @click.stop="drawer = !drawer"
+              v-if="logueado"
             ></v-app-bar-nav-icon>
 
             <v-avatar
