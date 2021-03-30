@@ -6,60 +6,51 @@ import Pacientes from "../components/Pacientes.vue";
 import Login from "../components/Login.vue";
 import Unknow from "../components/PerfilPaciente/Unknow.vue";
 import PerfilPaciente from "../components/PerfilPaciente/PerfilPaciente.vue";
-import ApolloExample from "../components/ApolloExample.vue";
 
 Vue.use(VueRouter)
 
 const routes = [
-  {
-    path: "/",
-    name: "home",
-    component: Home,
-    meta: {
-      doctor: true
-    }
-  },
-  { 
-    path: "/pacientes",
-    name: "pacientes",
-    component: Pacientes,
-    meta: {
-      doctor: true
-    },
-  },
-  { 
-    path: "/apollo",
-    name: "apollo",
-    component: ApolloExample,
-    meta: {
-      doctor: true
-    },
-  },
-  { 
-    path: "/paciente/:id",
-    name: "paciente",
-    component: PerfilPaciente,
-    meta: {
-      doctor: true,
-      paciente: true
-    },
-  },
-  {
-    path: '/login',
-    name: 'login',
-    component: Login,
-    meta: {
-      loguear: true
-    }
-  },
-  {
-    path: '/unknown',
-    name: 'unknown',
-    component: Unknow,
-    meta: {
-      libre: true
-    }
-  }
+	{
+		path: "/",
+		name: "home",
+		component: Home,
+		meta: {
+			doctor: true,
+		},
+	},
+	{
+		path: "/pacientes",
+		name: "pacientes",
+		component: Pacientes,
+		meta: {
+			doctor: true,
+		},
+	},
+	{
+		path: "/paciente/:id",
+		name: "paciente",
+		component: PerfilPaciente,
+		meta: {
+			doctor: true,
+			paciente: true,
+		},
+	},
+	{
+		path: "/login",
+		name: "login",
+		component: Login,
+		meta: {
+			loguear: true,
+		},
+	},
+	{
+		path: "/unknown",
+		name: "unknown",
+		component: Unknow,
+		meta: {
+			libre: true,
+		},
+	},
 ];
 
 const router = new VueRouter({

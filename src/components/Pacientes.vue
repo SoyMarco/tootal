@@ -82,13 +82,13 @@
                     color="primary"
                     ><v-icon>book_online</v-icon>Cita</v-btn
                   >
-                  <v-btn
+                 <!--  <v-btn
                     @click="agregarPago(item)"
                     outlined
                     rounded
                     color="green darken-4"
                     ><v-icon>monetization_on</v-icon>Pago</v-btn
-                  >
+                  > -->
                   <v-btn
                     @click="editCrudPaciente(item)"
                     outlined
@@ -125,7 +125,7 @@
       >
         <crud-citas-vue
           componente="paciente"
-          :itemProps="itemProps"
+          :itemProps="itemPropsCita"
         ></crud-citas-vue>
       </v-dialog>
       <!-- termina editar agregar CITA -->
@@ -136,16 +136,16 @@
         transition="dialog-top-transition"
         persistent
       >
-        <crud-paciente :componente="componente" :itemProps="itemProps">
+        <crud-paciente componente="paciente" :itemProps="itemPropsPaciente">
         </crud-paciente>
       </v-dialog>
       <!-- termina componente crudCitas -->
     </v-flex>
   </v-layout>
+  
 </template>
 
 <script>
-/* COMIENZA CODIGO */
 import axios from "axios";
 import moment from "moment";
 import CrudCitasVue from "./CrudCitas";
@@ -158,8 +158,8 @@ export default {
     tablaPacientes: 0,
     search: "",
     paciente: "",
-    itemProps: [],
-    componente: "",
+    itemPropsCita: [],
+    itemPropsPaciente: [],
     headersPacientes: [
       { text: "Id", value: "id", sortable: true },
       { text: "Nombre", value: "name", sortable: true },
@@ -211,11 +211,6 @@ export default {
         });
     },
     crearCita(item) {},
-
-    abrirCitasVue(item) {
-      this.itemProps = item;
-      this.$store.commit("abrirCitasVue");
-    },
     abrirCrudPaciente() {
       this.$store.state.crudPaciente = true;
       this.crudPacienteOpen = 1;
@@ -223,9 +218,13 @@ export default {
     cerrarCrudPaciente() {
       this.$store.state.crudPaciente = false;
     },
+
+    abrirCitasVue(item) {
+      this.itemPropsCita = item;
+      this.$store.commit("abrirCitasVue");
+    },
     editCrudPaciente(item) {
-      this.itemProps = item;
-      this.componente = "paciente";
+      this.itemPropsPaciente = item;
       this.$store.commit("abrirPacientesVue");
     },
   },

@@ -33,7 +33,7 @@
 
             <v-toolbar-title class="font-weight flex" v-else>
               <v-icon>event_available</v-icon>
-              <span> Agregar Cita</span>
+              <span> Nueva Cita</span>
 
               <v-btn
                 class="cerrar"
@@ -492,6 +492,7 @@
         v-model="CrudPaciente"
         transition="dialog-top-transition"
         persistent
+         v-if="dataCita.pacienteId < 1"
       >
         <crud-paciente componente="CrudCitas"> </crud-paciente>
       </v-dialog>
@@ -623,6 +624,7 @@ export default {
 
   methods: {
     propsCita() {
+      this.limpiarDataCita();
       let item = this.$props.itemProps;
       /* datos de "paciente" componente */
       if (this.$props.componente == "paciente") {
@@ -872,7 +874,6 @@ export default {
     },
 
     closeCitaModal() {
-      this.limpiarDataCita();
       this.$store.commit("cerrarCitasVue");
     },
 

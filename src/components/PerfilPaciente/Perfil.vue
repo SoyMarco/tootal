@@ -24,27 +24,34 @@
                 <!-- titulo -->
                 <v-toolbar>
                   <v-toolbar-title class="font-weight flex">
-                    <span> Marco Antonio Salazar Ramirez </span>
+                    <span>
+                      {{ paciente.name ? `${paciente.name}` : "Error" }}
+                    </span>
                     <span class="cerrar">ID: {{ $route.params.id }}</span>
                   </v-toolbar-title>
                 </v-toolbar>
-                <v-card-text>
-                  <v-btn color="blue darken-3" outlined class="cerrar">
-                    <v-icon>settings</v-icon>Editar datos</v-btn
-                  >
-                  Ultimo cambio: 22-Marzo-2021
-                </v-card-text>
+                <v-card-text> {{paciente.registration_time ?
+                  `Ultimo cambio: ${ultimoCambio}`
+                  :
+                  "No se han registrado cambios"}}</v-card-text>
 
                 <!-- Expandible (datos personales) -->
                 <v-card-actions>
                   <v-btn
+                    @click="abrirCitasVue()"
                     color="blue darken-3"
-                    text
-                    @click="showDatos = !showDatos"
-                  >
-                    Datos del paciente
+                    outlined
+                  ><v-icon>book_online</v-icon>
+                    Nueva cita
                   </v-btn>
-
+                  <v-btn
+                    @click="editCrudPaciente()"
+                    color="blue darken-3"
+                    outlined
+                    class="cerrar"
+                  >
+                    <v-icon>settings</v-icon>Editar datos</v-btn
+                  >
                   <v-spacer></v-spacer>
 
                   <v-btn icon @click="showDatos = !showDatos">
@@ -152,32 +159,85 @@
           </v-row>
         </v-container>
       </v-card-text>
+      <!-- inicia editar agregar CITA -->
+      <v-dialog
+        v-model="CrudCitasVue"
+        transition="dialog-top-transition"
+        persistent
+      >
+        <crud-citas-vue
+          componente="paciente"
+          :itemProps="itemProps"
+        ></crud-citas-vue>
+      </v-dialog>
+      <!-- termina editar agregar CITA -->
+
+      <!-- inicia componente crudCitas -->
+      <v-dialog
+        v-model="crudPaciente"
+        transition="dialog-top-transition"
+        persistent
+      >
+        <crud-paciente :componente="componente" :itemProps="itemProps">
+        </crud-paciente>
+      </v-dialog>
+      <!-- termina componente crudCitas -->
     </v-flex>
   </v-layout>
 </template>
 
 <script>
+import CrudCitasVue from "../CrudCitas";
+import CrudPaciente from "../CrudPaciente";
+import moment from "moment";
+
 export default {
+  components: { CrudCitasVue, CrudPaciente },
   props: ["pacienteData"],
   data: () => ({
     avatar: false,
     showDatos: false,
     paciente: "",
+    componente: "",
+    ultimoCambio: "",
+    itemProps:"",
   }),
-  computed: {},
+  computed: {
+    CrudCitasVue() {
+      return this.$store.state.CrudCitasVue;
+    },
+    crudPaciente() {
+      return this.$store.state.crudPaciente;
+    },
+  },
   watch: {
-     pacienteData() {
+    pacienteData() {
       if (this.pacienteData) {
         this.propsCita();
       }
-    }, 
+    },
   },
   created() {
     this.propsCita();
+     this.fechaCambio();
   },
   methods: {
     propsCita() {
       this.paciente = this.$props.pacienteData;
+      this.itemProps = this.$props.pacienteData;
+    },
+    editCrudPaciente() {
+      console.log(this.itemProps)
+      this.componente = "paciente";
+      this.$store.commit("abrirPacientesVue");
+    },
+    abrirCitasVue() {
+      this.$store.commit("abrirCitasVue");
+    },
+    fechaCambio(){
+    
+this.ultimoCambio = moment.unix("1616401200").format('LL');
+
     },
   },
 };

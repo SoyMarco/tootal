@@ -1,21 +1,29 @@
 <template>
 
-   <v-card  class="mx-auto my-1">
+   <v-card  class="mx-auto "
+      max-height="700"
+      elevation="24"
+      max-width="500"
+   >
             <v-img
               :src="require('@/assets/jpg/404.jpg')"
               class="white--text align-end"
-              gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
-               
-               max-height="2000"
+              gradient="rgba(0,0,0,.1), rgba(0,0,0,.5)"
+               max-height="500"
+
             >
-              <v-card-title >Pagina no encontrada</v-card-title>
+              <v-card-title >PAGINA NO ENCONTRADA</v-card-title>
             </v-img>
 
             <v-card-actions>
               <v-spacer></v-spacer>
 
               <v-btn icon>
+                 <router-link
+                    :to="{ name: 'home' }"
+                  >
                 <v-icon>home</v-icon>
+                 </router-link>
               </v-btn>
 
               <v-btn icon>

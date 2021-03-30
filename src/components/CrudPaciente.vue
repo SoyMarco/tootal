@@ -9,10 +9,12 @@
         class="modalCitaModal"
         persistent
       >
-        <v-card class="citaModal" elevation="24" shaped
-        :loading="paciente === '' && dataPaciente.modificarAgregar < 0 ? 'loading' : false "
-        :disabled="paciente === '' && dataPaciente.modificarAgregar < 0 ? 'disabled' : false"
-        
+        <v-card
+          class="citaModal"
+          elevation="24"
+          shaped
+          :loading="loadingData"
+          :disabled="disabledData"
         >
           <v-toolbar color="primary" dark class="titulocitaModal"
             ><v-spacer></v-spacer>
@@ -369,8 +371,9 @@ import moment from "moment";
 
 export default {
   props: ["componente", "itemProps"],
-
   data: () => ({
+    loadingData: false,
+    disabledData: false,
     btnSave: "save",
     colorBtnSave: "green darken-4",
     msjSave: "Guardar",
@@ -434,24 +437,25 @@ export default {
     crudPaciente() {
       return this.$store.state.crudPaciente;
     },
-    itemData() {
-      return this.itemProps;
+    cambioPacienteId() {
+      return this.$store.state.data.pacienteId;
     },
   },
 
   watch: {
+    crudPaciente() {
+      if (this.$store.state.crudPaciente === true) {
+        this.propsPaciente();
+      }
+    },
+    cambioPacienteId() {
+      if (this.$store.state.data.pacienteId > 0) {
+        this.dataPaciente.pacienteId = this.$store.state.data.pacienteId;
+        this.dataPaciente.paciente = this.$store.state.data.pacienteName;
+      }
+    },
     selectNacimiento(val) {
       val && setTimeout(() => (this.$refs.picker.activePicker = "YEAR"));
-    },
-    itemData() {
-      if (this.itemData) {
-        this.propsPaciente();
-      }
-    },
-    crudPaciente() {
-      if (this.itemdata) {
-        this.propsPaciente();
-      }
     },
   },
 
@@ -463,19 +467,25 @@ export default {
 
   methods: {
     propsPaciente() {
+      this.limpiarDataPaciente();
       let item = this.$props.itemProps;
       /* datos de "paciente" componente */
-      if (this.$props.componente == "paciente") {
+      if (this.$props.componente === "paciente") {
         this.dataPaciente.id = item.id;
         this.buscarPaciente();
+      }else if (this.$props.componente === "CrudCitas") {
+        this.dataPaciente.modificarAgregar = 1;
+        this.paciente = 1;
       }
-       if (this.$props.componente == "CrudCitas"){
-this.dataPaciente.modificarAgregar = 1;
-this.paciente= 1;
-      }
-     
     },
-
+    pageLoadingTrue() {
+      this.loadingData = "loading";
+      this.disabledData = "disabled";
+    },
+    pageLoadingFalse() {
+      this.loadingData = false;
+      this.disabledData = false;
+    },
     guardarPaciente() {
       let me = this;
       let header = { Token: this.$store.state.token };
@@ -507,7 +517,7 @@ this.paciente= 1;
             /* me.limpiardataPaciente();
             me.listarCitas();
             me.cerrarCrudPaciente(); */
-             me.loadingSave = false;
+            me.loadingSave = false;
             me.cerrarCrudPaciente();
             me.limpiarDataPaciente();
           })
@@ -556,28 +566,24 @@ this.paciente= 1;
     },
 
     buscarPaciente() {
+      this.pageLoadingTrue();
       const me = this;
       let header = { Token: this.$store.state.token };
       let configuracion = { headers: header };
       axios
-        .put(
-          "/paciente/query",
-          { id: this.dataPaciente.id },
-          configuracion
-        )
+        .put("/paciente/query", { id: this.dataPaciente.id }, configuracion)
         .then(function (response) {
+          me.pageLoadingFalse();
           if (!response.data == "") {
             me.paciente = response.data;
             me.agregarDataPaciente();
           } else {
-            console.log(response); 
+            console.log(response);
           }
         });
     },
 
     agregarDataPaciente() {
-       console.log(this.dataPaciente.modificarAgregar)
-      console.log(this.paciente)
       /* buscar nombre del Dr en el Array con el ID */
       let drQueSeBusca = this.paciente.doctor;
       let drNombre = "";
@@ -588,7 +594,8 @@ this.paciente= 1;
       }
       this.docList.forEach(buscarDoc);
 
-/* asignar los valores de la consulta a los locales */
+      /* asignar los valores de la consulta a los locales */
+
       this.dataPaciente.id = this.paciente.id;
       this.dataPaciente.pacienteId = this.paciente.ion_user_id;
       this.dataPaciente.paciente = this.paciente.name;
@@ -639,7 +646,7 @@ this.paciente= 1;
       }
     },
 
- modificarPaciente() {
+    modificarPaciente() {
       if (this.$refs.form.validate() == true) {
         try {
           this.loadingSave = "loading";
@@ -685,15 +692,12 @@ this.paciente= 1;
       this.$refs.selectNacimiento.save(fnacimiento);
     },
     cerrarCrudPaciente() {
+      this.limpiarDataPaciente(); 
       this.$store.state.crudPaciente = false;
-      this.limpiarDataPaciente();
+      
     },
     limpiarDataPaciente() {
-      this.$nextTick(() => {
-        this.dataPaciente = Object.assign({}, this.defaultPaciente);
-      });
-      this.fnacimiento = "";
-      this.paciente = false;
+     this.dataPaciente = this.defaultPaciente
     },
   },
 };
